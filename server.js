@@ -1,0 +1,74 @@
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+// const promocategoryRoute = require("./routes/promocategory")
+
+// Routes
+const authorRoute = require("./routes/author");
+const guidesRoute = require("./routes/guides");
+const sliderRoute = require("./routes/slider");
+const tourRoute = require("./routes/tour");
+const upcomingRoute = require("./routes/upcoming");
+const userRoute = require("./routes/user");
+const newsRoute = require("./routes/news");
+const cartRoute = require("./routes/cart");
+const orderRoute = require("./routes/order");
+
+const app = express();
+const cookieParser = require("cookie-parser");
+const multer = require("multer");
+const bodyParser = require("body-parser");
+const uploadMiddleware = multer({
+  dest: "uploads/",
+  limits: { fileSize: 300 * 1024 * 1024 },
+});
+const fs = require("fs");
+const dotenv = require("dotenv");
+mongoose.set("strictQuery", true);
+const requestIp = require("request-ip");
+
+dotenv.config({ path: "./config/config.env" });
+
+// origin = ["s"];
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log(origin);
+//     if (origin) {
+//       callback(null, true);
+//     } else {
+//       callback(null, true);
+//     }
+//   },
+//   allowedHeaders:
+//     "Authorization, Set-Cookie, Content-Type, Access-Control-Allow-Origin' ",
+//   methods: "GET, POST, PUT, DELETE",
+//   credentials: true,
+// };
+
+app.set("trust proxy", true);
+app.use(requestIp.mw());
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+app.use(bodyParser.json({ limit: "300mb" }));
+app.use("/uploads", express.static(__dirname + "/uploads"));
+app.use("/api/v1/news", newsRoute);
+app.use("/api/v1/authors", authorRoute);
+app.use("/api/v1/guides", guidesRoute);
+app.use("/api/v1/sliders", sliderRoute);
+app.use("/api/v1/tours", tourRoute);
+app.use("/api/v1/upcomings", upcomingRoute);  
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/cart", cartRoute);
+app.use("/api/v1/order", orderRoute);
+
+mongoose.connect(
+  "mongodb+srv://zolbootbaatar123:Zolboot123.@cluster0.s5hpmqn.mongodb.net/khog_bish",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+const PORT = process.env.PORT || 8888;
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

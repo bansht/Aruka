@@ -69,6 +69,6 @@ mongoose.connect(
     useUnifiedTopology: true,
   }
 );
-const PORT = process.env.PORT || 8888;
+const PORT = 3012;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

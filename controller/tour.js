@@ -63,17 +63,28 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.createModel = asyncHandler(async (req, res, next) => {
-  let cover;
+  let cover = [];
 
-  if (req.file && req.file.filename) {
-    cover = req.file.filename;
+  if (req.files && req.files.length > 0) {
+    cover = req.files[0].filename;
   } else {
     cover = "no-jpg";
   }
 
+  // Parse guide field if it's a JSON string
+  let guideData = req.body.guide;
+  if (typeof guideData === "string") {
+    try {
+      guideData = JSON.parse(guideData);
+    } catch (error) {
+      throw new MyError("Guide field must be a valid JSON object", 400);
+    }
+  }
+
   const modelData = {
     ...req.body,
-    image: cover,
+    guide: guideData,
+    images: cover,
   };
 
   const model = await Model.create(modelData);
@@ -85,7 +96,17 @@ exports.createModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateModel = asyncHandler(async (req, res, next) => {
-  const model = await Model.findByIdAndUpdate(req.params.id, req.body, {
+  // Parse guide field if it's a JSON string
+  let updateData = { ...req.body };
+  if (updateData.guide && typeof updateData.guide === "string") {
+    try {
+      updateData.guide = JSON.parse(updateData.guide);
+    } catch (error) {
+      throw new MyError("Guide field must be a valid JSON object", 400);
+    }
+  }
+
+  const model = await Model.findByIdAndUpdate(req.params.id, updateData, {
     new: true,
     runValidators: true,
   });

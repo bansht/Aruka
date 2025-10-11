@@ -1,4 +1,4 @@
-const Model = require("../models/Guides");  
+const Model = require("../models/Guides");
 const MyError = require("../utils/myError");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../utils/paginate");
@@ -63,28 +63,56 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.createModel = asyncHandler(async (req, res, next) => {
-  let cover;
+  let avatar = "no-avatar.jpg";
+  let coverImage = "no-cover.jpg";
 
-  // req.files.forEach((e) => {
-  //   console.log(e.file);
-  // })
-
-  // console.log(req.files)
-
-  if (req.file && req.file.filename) {
-    cover = req.file.filename;
-  } else {
-    cover = "no-jpg";
+  // Handle multiple file uploads
+  if (req.files && req.files.length > 0) {
+    req.files.forEach((file) => {
+      if (file.fieldname === "avatar") {
+        avatar = file.filename;
+      } else if (file.fieldname === "coverImage") {
+        coverImage = file.filename;
+      }
+    });
   }
 
-  // let plans;
-  // if (req.body.plans) {
-  //   plans = JSON.parse(req.body.plans);
-  // }
+  // Parse JSON strings for embedded objects
+  let contact = {};
+  let stats = { views: 0, likes: 0, bookmarks: 0 };
+  let upcomingTours = [];
+
+  if (req.body.contact) {
+    try {
+      contact = JSON.parse(req.body.contact);
+    } catch (error) {
+      contact = {};
+    }
+  }
+
+  if (req.body.stats) {
+    try {
+      stats = JSON.parse(req.body.stats);
+    } catch (error) {
+      stats = { views: 0, likes: 0, bookmarks: 0 };
+    }
+  }
+
+  if (req.body.upcomingTours) {
+    try {
+      upcomingTours = JSON.parse(req.body.upcomingTours);
+    } catch (error) {
+      upcomingTours = [];
+    }
+  }
 
   const modelData = {
     ...req.body,
-    cover,
+    avatar,
+    coverImage,
+    contact,
+    stats,
+    upcomingTours,
   };
 
   const model = await Model.create(modelData);
@@ -96,7 +124,45 @@ exports.createModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateModel = asyncHandler(async (req, res, next) => {
-  const model = await Model.findByIdAndUpdate(req.params.id, req.body, {
+  let updateData = { ...req.body };
+
+  // Handle multiple file uploads
+  if (req.files && req.files.length > 0) {
+    req.files.forEach((file) => {
+      if (file.fieldname === "avatar") {
+        updateData.avatar = file.filename;
+      } else if (file.fieldname === "coverImage") {
+        updateData.coverImage = file.filename;
+      }
+    });
+  }
+
+  // Parse JSON strings for embedded objects
+  if (req.body.contact) {
+    try {
+      updateData.contact = JSON.parse(req.body.contact);
+    } catch (error) {
+      // Keep existing contact if parsing fails
+    }
+  }
+
+  if (req.body.stats) {
+    try {
+      updateData.stats = JSON.parse(req.body.stats);
+    } catch (error) {
+      // Keep existing stats if parsing fails
+    }
+  }
+
+  if (req.body.upcomingTours) {
+    try {
+      updateData.upcomingTours = JSON.parse(req.body.upcomingTours);
+    } catch (error) {
+      // Keep existing upcomingTours if parsing fails
+    }
+  }
+
+  const model = await Model.findByIdAndUpdate(req.params.id, updateData, {
     new: true,
     runValidators: true,
   });

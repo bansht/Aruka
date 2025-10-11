@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
+const GuideSchema = new Schema({
+  name: { type: String, required: true },
+  experience: { type: String },
+  languages: [String],
+});
+
 const TourSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -13,7 +19,7 @@ const TourSchema = new Schema(
     images: [String],
     itinerary: [String],
     includes: [String],
-    guide: { type: Schema.Types.ObjectId, ref: "Guides" },
+    guide: GuideSchema,
     location: { type: String },
     isActive: { type: Boolean, default: true },
     isFeatured: { type: Boolean, default: false },

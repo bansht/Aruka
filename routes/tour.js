@@ -12,7 +12,7 @@ const upload = require("../middleware/fileUpload");
 
 // router.route('/:userId').get(getUserModels);
 
-router.route("/").get(getModels).post(upload.single("file"), createModel);
+router.route("/").get(getModels).post(upload.any(), createModel);
 
 router
   .route("/:id")

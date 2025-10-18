@@ -13,7 +13,9 @@ const userRoute = require("./routes/user");
 const newsRoute = require("./routes/news");
 const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
-
+const instgmRoute = require("./routes/instgm")
+const testimonialsRoute = require("./routes/testimonials"); 
+const sponsorRoute = require("./routes/sponsor");
 const app = express();
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
@@ -61,7 +63,9 @@ app.use("/api/v1/upcomings", upcomingRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/order", orderRoute);
-
+app.use("/api/v1/instgm", instgmRoute);
+app.use("/api/v1/testimonials", testimonialsRoute);
+app.use("/api/v1/sponsors", sponsorRoute);
 mongoose.connect(
   "mongodb+srv://zolbootbaatar123:Zolboot123.@cluster0.s5hpmqn.mongodb.net/khog_bish",
   {

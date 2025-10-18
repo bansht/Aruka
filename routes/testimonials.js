@@ -5,12 +5,12 @@ const {
   getModel,
   updateModel,
   deleteModel,
-  // getUserModels,
-} = require("../controller/news");
+  getUserModels,
+} = require("../controller/testimonials");
 const router = express.Router();
 const upload = require("../middleware/fileUpload");
 
-// router.route("/:userId").get(getUserModels);
+// router.route('/:userId').get(getUserModels);
 
 router.route("/").get(getModels).post(upload.single("image"), createModel);
 

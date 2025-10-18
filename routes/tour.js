@@ -17,7 +17,7 @@ router.route("/").get(getModels).post(upload.any(), createModel);
 router
   .route("/:id")
   .get(getModel)
-  .put(upload.single("file"), updateModel)
+  .put(upload.single("cover"), updateModel)
   .delete(deleteModel);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const {
   updateModel,
   deleteModel,
   getUserModels,
-} = require("../controller/author");
+} = require("../controller/author");    
 const router = express.Router();
 const upload = require("../middleware/fileUpload");
 

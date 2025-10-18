@@ -5,19 +5,19 @@ const {
   getModel,
   updateModel,
   deleteModel,
-  // getUserModels,
-} = require("../controller/news");
+  getUserModels,
+} = require("../controller/sponsor");    
 const router = express.Router();
 const upload = require("../middleware/fileUpload");
 
-// router.route("/:userId").get(getUserModels);
+// router.route('/:userId').get(getUserModels);
 
 router.route("/").get(getModels).post(upload.single("image"), createModel);
 
 router
   .route("/:id")
   .get(getModel)
-  .put(upload.single("file"), updateModel)
+  .put(upload.single("image"), updateModel)
   .delete(deleteModel);
 
 module.exports = router;

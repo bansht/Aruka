@@ -9,6 +9,7 @@ const NewsSchema = new Schema(
     author: { type: Schema.Types.ObjectId, ref: "Author" },
     publishDate: String,
     readTime: String,
+    image: String,
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     category: { type: Schema.Types.ObjectId, ref: "Category" },

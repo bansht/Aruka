@@ -7,7 +7,7 @@ const OrdersSchema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true },
     phone: { type: String, required: true },
-    address: { type: String, required: false},
+    address: { type: String, required: false },
     city: { type: String, required: false },
     country: { type: String, required: false },
     travelDate: { type: String, required: false }, // эсвэл Date төрөл ашиглаж болно
@@ -16,8 +16,15 @@ const OrdersSchema = new Schema(
     description: { type: String, required: false },
 
     // Холбогдох аялал (Tour) болон хөтөч (Guide) холбох боломж
-    tour: { type: mongoose.Schema.Types.ObjectId, ref: "Tour", required: false },
-    guide: { type: mongoose.Schema.Types.ObjectId, ref: "Guide", required: false },
+    tours: [
+      {
+        tour: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Tour",
+          required: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

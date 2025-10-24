@@ -57,7 +57,7 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/api/v1/news", newsRoute);
 app.use("/api/v1/authors", authorRoute);
 app.use("/api/v1/guides", guidesRoute);
-app.use("/api/v1/sliders", sliderRoute);
+app.use("/api/v1/slider", sliderRoute);
 app.use("/api/v1/tour", tourRoute);
 app.use("/api/v1/upcomings", upcomingRoute);
 app.use("/api/v1/user", userRoute);

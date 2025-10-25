@@ -63,28 +63,28 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.createModel = asyncHandler(async (req, res, next) => {
-  let image;
+  let backgroundImage, image, image2;
 
-  // req.files.forEach((e) => {
-  //   console.log(e.file);
-  // })
-
-  // console.log(req.files)
-
-  if (req.file && req.file.filename) {
-    image = req.file.filename;
-  } else {
-    image = "no-jpg";
+  // Handle multiple file uploads
+  if (req.files) {
+    if (req.files.backgroundImage && req.files.backgroundImage[0]) {
+      backgroundImage = req.files.backgroundImage[0].filename;
+    }
+    if (req.files.image && req.files.image[0]) {
+      image = req.files.image[0].filename;
+    }
+    if (req.files.image2 && req.files.image2[0]) {
+      image2 = req.files.image2[0].filename;
+    }
   }
 
-  // let plans;
-  // if (req.body.plans) {
-  //   plans = JSON.parse(req.body.plans);
-  // }
-
   const modelData = {
-    ...req.body,
-    image,
+    title: req.body.title,
+    subtitle: req.body.subtitle,
+    backgroundImage: backgroundImage || "no-jpg",
+    image: image || "no-jpg",
+    image2: image2 || "no-jpg",
+    link: req.body.link,
   };
 
   const model = await Model.create(modelData);

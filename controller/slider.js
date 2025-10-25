@@ -65,17 +65,19 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 exports.createModel = asyncHandler(async (req, res, next) => {
   let backgroundImage, image, image2;
 
-  // Handle multiple file uploads
-  if (req.files) {
-    if (req.files.backgroundImage && req.files.backgroundImage[0]) {
-      backgroundImage = req.files.backgroundImage[0].filename;
-    }
-    if (req.files.image && req.files.image[0]) {
-      image = req.files.image[0].filename;
-    }
-    if (req.files.image2 && req.files.image2[0]) {
-      image2 = req.files.image2[0].filename;
-    }
+  console.log(req.files);
+
+  // Handle multiple file uploads - req.files is an array when using upload.any()
+  if (req.files && Array.isArray(req.files)) {
+    req.files.forEach((file) => {
+      if (file.fieldname === "backgroundImage") {
+        backgroundImage = file.filename;
+      } else if (file.fieldname === "image") {
+        image = file.filename;
+      } else if (file.fieldname === "image2") {
+        image2 = file.filename;
+      }
+    });
   }
 
   const modelData = {

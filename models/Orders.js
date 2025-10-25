@@ -15,7 +15,6 @@ const OrdersSchema = new Schema(
     specialRequests: { type: String, required: false },
     description: { type: String, required: false },
 
-    // Холбогдох аялал (Tour) болон хөтөч (Guide) холбох боломж
     tours: [
       {
         tour: {

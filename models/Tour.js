@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const GuideSchema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String },
   experience: { type: String },
   languages: [String],
 });

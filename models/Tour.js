@@ -19,6 +19,15 @@ const TourSchema = new Schema(
     images: [String],
     itinerary: [String],
     includes: [String],
+    not_includes: [String],
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
+    price_per_person: [
+      {
+        price: { type: String },
+        description: { type: String },
+        people: { type: Number },
+      },
+    ],
     guide: GuideSchema,
     location: { type: String },
     isActive: { type: Boolean, default: true },

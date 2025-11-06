@@ -16,6 +16,9 @@ const orderRoute = require("./routes/order");
 const instgmRoute = require("./routes/instgm");
 const testimonialsRoute = require("./routes/testimonials");
 const sponsorRoute = require("./routes/sponsor");
+const categoryRoute = require("./routes/category");
+const contactRoute = require("./routes/contact");
+
 const app = express();
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
@@ -66,8 +69,11 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/instgm", instgmRoute);
 app.use("/api/v1/testimonials", testimonialsRoute);
 app.use("/api/v1/sponsors", sponsorRoute);
+app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/contact", contactRoute);
+
 mongoose.connect(
-  "mongodb+srv://zolbootbaatar123:Zolboot123.@cluster0.s5hpmqn.mongodb.net/khog_bish",
+  "mongodb+srv://zolbootbaatar123:Zolboot123.@cluster0.s5hpmqn.mongodb.net/arujan",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,

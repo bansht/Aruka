@@ -18,6 +18,8 @@ const testimonialsRoute = require("./routes/testimonials");
 const sponsorRoute = require("./routes/sponsor");
 const categoryRoute = require("./routes/category");
 const contactRoute = require("./routes/contact");
+const nodemailer = require("nodemailer"); 
+
 
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -33,6 +35,7 @@ mongoose.set("strictQuery", true);
 const requestIp = require("request-ip");
 
 dotenv.config({ path: "./config/config.env" });
+require("dotenv").config();
 
 // origin = ["s"];
 // var corsOptions = {
@@ -49,6 +52,7 @@ dotenv.config({ path: "./config/config.env" });
 //   methods: "GET, POST, PUT, DELETE",
 //   credentials: true,
 // };
+
 
 app.set("trust proxy", true);
 app.use(requestIp.mw());
@@ -71,6 +75,37 @@ app.use("/api/v1/testimonials", testimonialsRoute);
 app.use("/api/v1/sponsors", sponsorRoute);
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/contact", contactRoute);
+app.post("/subscribe", async (req, res) => {
+  const { email ,title , phone ,address} = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email required" });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+
+    await transporter.verify();
+
+    await transporter.sendMail({
+      from: `"Newsletter" <${process.env.GMAIL_USER}>`,
+      to: process.env.GMAIL_USER,
+      subject: "New Newsletter Subscriber",
+      text: `Шинэ хэрэглэгч Subscribe дарлаа: ${email} ${title} ${phone} ${address}`,
+    });
+
+    res.status(200).json({ message: "Subscribed successfully" });
+  } catch (err) {
+    console.error("❌ Email sending error:", err.message);
+    res.status(500).json({ message: "Email sending failed", error: err.message });
+  }
+});
 
 mongoose.connect(
   "mongodb+srv://zolbootbaatar123:Zolboot123.@cluster0.s5hpmqn.mongodb.net/arujan",

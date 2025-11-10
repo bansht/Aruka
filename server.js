@@ -19,7 +19,7 @@ const sponsorRoute = require("./routes/sponsor");
 const categoryRoute = require("./routes/category");
 const contactRoute = require("./routes/contact");
 const nodemailer = require("nodemailer"); 
-
+const emailRoute = require("./routes/email");
 
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -36,23 +36,6 @@ const requestIp = require("request-ip");
 
 dotenv.config({ path: "./config/config.env" });
 require("dotenv").config();
-
-// origin = ["s"];
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     console.log(origin);
-//     if (origin) {
-//       callback(null, true);
-//     } else {
-//       callback(null, true);
-//     }
-//   },
-//   allowedHeaders:
-//     "Authorization, Set-Cookie, Content-Type, Access-Control-Allow-Origin' ",
-//   methods: "GET, POST, PUT, DELETE",
-//   credentials: true,
-// };
-
 
 app.set("trust proxy", true);
 app.use(requestIp.mw());
@@ -75,6 +58,7 @@ app.use("/api/v1/testimonials", testimonialsRoute);
 app.use("/api/v1/sponsors", sponsorRoute);
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/contact", contactRoute);
+app.use("/api/v1/email", emailRoute);
 app.post("/subscribe", async (req, res) => {
   const { email ,title , phone ,address} = req.body;
 
@@ -94,9 +78,9 @@ app.post("/subscribe", async (req, res) => {
     await transporter.verify();
 
     await transporter.sendMail({
-      from: `"Newsletter" <${process.env.GMAIL_USER}>`,
+      from: `"Arujan" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
-      subject: "New Newsletter Subscriber",
+      subject: "New Arujan Subscriber",
       text: `Шинэ хэрэглэгч Subscribe дарлаа: ${email} ${title} ${phone} ${address}`,
     });
 

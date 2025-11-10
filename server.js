@@ -18,7 +18,7 @@ const testimonialsRoute = require("./routes/testimonials");
 const sponsorRoute = require("./routes/sponsor");
 const categoryRoute = require("./routes/category");
 const contactRoute = require("./routes/contact");
-const nodemailer = require("nodemailer"); 
+const nodemailer = require("nodemailer");
 const emailRoute = require("./routes/email");
 
 const app = express();
@@ -60,7 +60,7 @@ app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/email", emailRoute);
 app.post("/subscribe", async (req, res) => {
-  const { email ,title , phone ,address} = req.body;
+  const { email, title, phone, address } = req.body;
 
   if (!email) {
     return res.status(400).json({ message: "Email required" });
@@ -78,16 +78,18 @@ app.post("/subscribe", async (req, res) => {
     await transporter.verify();
 
     await transporter.sendMail({
-      from: `"Arujan" <${process.env.GMAIL_USER}>`,
+      from: `"Mongolian Steppe Subscriber:" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
-      subject: "New Arujan Subscriber",
+      subject: "New Mongolian Steppe Subscriber",
       text: `Шинэ хэрэглэгч Subscribe дарлаа: ${email} ${title} ${phone} ${address}`,
     });
 
     res.status(200).json({ message: "Subscribed successfully" });
   } catch (err) {
     console.error("❌ Email sending error:", err.message);
-    res.status(500).json({ message: "Email sending failed", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Email sending failed", error: err.message });
   }
 });
 

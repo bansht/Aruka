@@ -1,4 +1,4 @@
-const Model = require("../models/Upcoming");
+const Model = require("../models/UpComing");
 const MyError = require("../utils/myError");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../utils/paginate");

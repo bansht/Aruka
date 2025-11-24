@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const paginate = require("../utils/paginate");
 const os = require("os");
 const requestIp = require("request-ip");
+const transporter = require("../config/nodemailer-gmail");
 
 exports.getModels = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -63,14 +64,48 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.createModel = asyncHandler(async (req, res, next) => {
+  const { title, email, phone, address, map } = req.body;
+
+  // Validation
+  // if (!title || !email || !phone || !address) {
+  //   throw new MyError("Бүх шаардлагатай мэдээллийг оруулна уу!", 400);
+  // }
+
   const modelData = {
-    ...req.body,
+    title,
+    email,
+    phone,
+    address,
+    map: map || "",
   };
 
   const model = await Model.create(modelData);
 
+  try {
+    await transporter.sendMail({
+      from: `"Mongolia Trekking Contact" <${process.env.GMAIL_USER}>`,
+      to: process.env.RECEIVE_EMAIL || process.env.GMAIL_USER,
+      subject: "🔔 Шинэ Contact мэдээлэл",
+      html: `
+        <h2>✅ Шинэ Contact мэдээлэл ирлээ</h2>
+        <hr/>
+        <p><strong>Гарчиг:</strong> ${title}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Утас:</strong> ${phone}</p>
+        <p><strong>Хаяг:</strong> ${address}</p>
+        ${map ? `<p><strong>Map:</strong> ${map}</p>` : ''}
+        <hr/>
+        <p><small>Огноо: ${new Date().toLocaleString('mn-MN')}</small></p>
+      `,
+      replyTo: email,
+    });
+  } catch (emailError) {
+    console.error("Email илгээхэд алдаа:", emailError.message);
+  }
+
   res.status(200).json({
     success: true,
+    message: "Contact амжилттай хадгалагдлаа!",
     data: model,
   });
 });

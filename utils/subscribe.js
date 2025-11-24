@@ -1,34 +1,51 @@
-const nodemailer = require("nodemailer");
+// Хэрвээ Brevo ажиллахгүй бол, nodemailer-gmail ашигла
+// const transporter = require("../config/nodemailer-gmail");
+const transporter = require("../config/nodemailer");
+const Email = require("../models/Email");
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Only POST allowed" });
-  }
-
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ message: "Email required" });
-  }
-
+const sendSubscribeEmail = async (email) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
+    // Check if email already exists, if not create
+    const existingEmail = await Email.findOne({ email });
+    
+    if (!existingEmail) {
+      await Email.create({ email });
+    }
+
+    // Send email notification regardless
+    await transporter.sendMail({
+      from: `"Mongolia Trekking" <${process.env.GMAIL_USER}>`,
+      to: process.env.RECEIVE_EMAIL || process.env.GMAIL_USER,
+      subject: "🔔 Шинэ Newsletter Subscribe хүсэлт",
+      html: `
+        <h2>✅ Newsletter Subscribe хүсэлт</h2>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Статус:</strong> ${existingEmail ? 'Аль хэдийн бүртгэлтэй' : 'Шинэ бүртгэл'}</p>
+        <p><strong>Огноо:</strong> ${new Date().toLocaleString('mn-MN')}</p>
+      `,
+      text: `Newsletter хүсэлт: ${email}`,
     });
 
     await transporter.sendMail({
-      from: `"Newsletter" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
-      subject: "New Newsletter Subscriber",
-      text: `Шинэ хэрэглэгч бүртгэгдлээ: ${email}`,
+      from: `"Mongolia Trekking" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: "Welcome to Mongolia Trekking Newsletter",
+      html: `
+        <h2>Баярлалаа!</h2>
+        <p>Та Mongolia Trekking-ийн newsletter-д амжилттай бүртгэгдлээ.</p>
+        <p>Бид танд Монголын аялал, tour болон бусад сонирхолтой мэдээллүүдийг тогтмол илгээх болно.</p>
+        <br/>
+        <p>Хүндэтгэсэн,</p>
+        <p><strong>Mongolia Trekking Tours</strong></p>
+      `,
+      text: `Баярлалаа! Та Mongolia Trekking-ийн newsletter-д амжилттай бүртгэгдлээ.`,
     });
 
-    res.status(200).json({ message: "Subscribed successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Email sending failed" });
+    return { success: true, message: "Subscribed successfully" };
+  } catch (error) {
+    console.error("Subscribe error:", error);
+    throw error;
   }
-}
+};
+
+module.exports = { sendSubscribeEmail };

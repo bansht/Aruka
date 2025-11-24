@@ -1,3 +1,6 @@
+// Load environment variables FIRST
+require('dotenv').config({ path: "./config/config.env" });
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -18,6 +21,7 @@ const testimonialsRoute = require("./routes/testimonials");
 const sponsorRoute = require("./routes/sponsor");
 const categoryRoute = require("./routes/category");
 const contactRoute = require("./routes/contact");
+const feedbackRoute = require("./routes/feedback");
 const nodemailer = require("nodemailer");
 const emailRoute = require("./routes/email");
 
@@ -30,12 +34,8 @@ const uploadMiddleware = multer({
   limits: { fileSize: 300 * 1024 * 1024 },
 });
 const fs = require("fs");
-const dotenv = require("dotenv");
 mongoose.set("strictQuery", true);
 const requestIp = require("request-ip");
-
-dotenv.config({ path: "./config/config.env" });
-require("dotenv").config();
 
 app.set("trust proxy", true);
 app.use(requestIp.mw());
@@ -58,6 +58,7 @@ app.use("/api/v1/testimonials", testimonialsRoute);
 app.use("/api/v1/sponsors", sponsorRoute);
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/contact", contactRoute);
+app.use("/api/v1/feedback", feedbackRoute);
 app.use("/api/v1/email", emailRoute);
 app.post("/subscribe", async (req, res) => {
   const { email, title, phone, address } = req.body;
@@ -80,9 +81,9 @@ app.post("/subscribe", async (req, res) => {
     await transporter.verify();
 
     await transporter.sendMail({
-      from: `"Mongolian Steppe Subscriber:" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
-      subject: "New Mongolian Steppe Subscriber",
+      from: `"Mongolian Steppe Subscriber" <${process.env.GMAIL_USER}>`,
+      to: process.env.RECEIVE_EMAIL || process.env.GMAIL_USER,
+      subject: "🔔 New Mongolian Steppe Subscriber",
       text: `Шинэ хэрэглэгч Subscribe дарлаа: ${email} ${title} ${phone} ${address}`,
     });
 

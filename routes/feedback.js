@@ -5,12 +5,10 @@ const {
   getModel,
   updateModel,
   deleteModel,
-  subscribe,
-} = require("../controller/email");
+} = require("../controller/feedback");
 const router = express.Router();
 
 router.route("/").get(getModels).post(createModel);
-router.route("/subscribe").post(subscribe);
 
 router.route("/:id").get(getModel).put(updateModel).delete(deleteModel);
 

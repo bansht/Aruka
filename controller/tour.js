@@ -63,12 +63,10 @@ exports.getModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.createModel = asyncHandler(async (req, res, next) => {
-  let cover = [];
+  let images = [];
 
   if (req.files && req.files.length > 0) {
-    cover = req.files[0].filename;
-  } else {
-    cover = "no-jpg";
+    images = req.files.map(file => file.filename);
   }
 
   // Parse guide field if it's a JSON string
@@ -81,10 +79,54 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     }
   }
 
+  // Parse price_per_person field if it's a JSON string
+  let pricePerPersonData = req.body.price_per_person;
+  if (typeof pricePerPersonData === "string") {
+    try {
+      pricePerPersonData = JSON.parse(pricePerPersonData);
+    } catch (error) {
+      throw new MyError("Price per person field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse itinerary field if it's a JSON string
+  let itineraryData = req.body.itinerary;
+  if (typeof itineraryData === "string") {
+    try {
+      itineraryData = JSON.parse(itineraryData);
+    } catch (error) {
+      throw new MyError("Itinerary field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse includes field if it's a JSON string
+  let includesData = req.body.includes;
+  if (typeof includesData === "string") {
+    try {
+      includesData = JSON.parse(includesData);
+    } catch (error) {
+      throw new MyError("Includes field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse not_includes field if it's a JSON string
+  let notIncludesData = req.body.not_includes;
+  if (typeof notIncludesData === "string") {
+    try {
+      notIncludesData = JSON.parse(notIncludesData);
+    } catch (error) {
+      throw new MyError("Not includes field must be a valid JSON array", 400);
+    }
+  }
+
   const modelData = {
     ...req.body,
     guide: guideData,
-    images: cover,
+    price_per_person: pricePerPersonData,
+    itinerary: itineraryData,
+    includes: includesData,
+    not_includes: notIncludesData,
+    images: images.length > 0 ? images : undefined,
   };
 
   const model = await Model.create(modelData);
@@ -96,13 +138,55 @@ exports.createModel = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateModel = asyncHandler(async (req, res, next) => {
-  // Parse guide field if it's a JSON string
+  // Handle file uploads
   let updateData = { ...req.body };
+  
+  if (req.files && req.files.length > 0) {
+    updateData.images = req.files.map(file => file.filename);
+  }
+  
+  // Parse guide field if it's a JSON string
   if (updateData.guide && typeof updateData.guide === "string") {
     try {
       updateData.guide = JSON.parse(updateData.guide);
     } catch (error) {
       throw new MyError("Guide field must be a valid JSON object", 400);
+    }
+  }
+
+  // Parse price_per_person field if it's a JSON string
+  if (updateData.price_per_person && typeof updateData.price_per_person === "string") {
+    try {
+      updateData.price_per_person = JSON.parse(updateData.price_per_person);
+    } catch (error) {
+      throw new MyError("Price per person field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse itinerary field if it's a JSON string
+  if (updateData.itinerary && typeof updateData.itinerary === "string") {
+    try {
+      updateData.itinerary = JSON.parse(updateData.itinerary);
+    } catch (error) {
+      throw new MyError("Itinerary field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse includes field if it's a JSON string
+  if (updateData.includes && typeof updateData.includes === "string") {
+    try {
+      updateData.includes = JSON.parse(updateData.includes);
+    } catch (error) {
+      throw new MyError("Includes field must be a valid JSON array", 400);
+    }
+  }
+
+  // Parse not_includes field if it's a JSON string
+  if (updateData.not_includes && typeof updateData.not_includes === "string") {
+    try {
+      updateData.not_includes = JSON.parse(updateData.not_includes);
+    } catch (error) {
+      throw new MyError("Not includes field must be a valid JSON array", 400);
     }
   }
 

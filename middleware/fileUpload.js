@@ -24,9 +24,10 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fieldSize: 300 * 1024 * 1024,
-    fileSize: 300 * 1024 * 1024,
-    fieldNameSize: 300 * 1024 * 1024,
+    fieldSize: 300 * 1024 * 1024, // 300MB for field size
+    fileSize: 100 * 1024 * 1024,  // 100MB per file
+    files: 50,                     // Maximum 50 files
+    fields: 100,                   // Maximum 100 non-file fields
   },
 });
 

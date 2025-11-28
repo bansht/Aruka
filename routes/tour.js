@@ -12,12 +12,12 @@ const upload = require("../middleware/fileUpload");
 
 // router.route('/:userId').get(getUserModels);
 
-router.route("/").get(getModels).post(upload.array("images", 10), createModel);
+router.route("/").get(getModels).post(upload.any(), createModel);
 
 router
   .route("/:id")
   .get(getModel)
-  .put(upload.array("images", 10), updateModel)
+  .put(upload.any(), updateModel)
   .delete(deleteModel);
 
 module.exports = router;

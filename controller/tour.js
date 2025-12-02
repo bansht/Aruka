@@ -69,7 +69,6 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     images = req.files.map(file => file.filename);
   }
 
-  // Parse guide field if it's a JSON string
   let guideData = req.body.guide;
   if (typeof guideData === "string") {
     try {
@@ -79,7 +78,6 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Parse price_per_person field if it's a JSON string
   let pricePerPersonData = req.body.price_per_person;
   if (typeof pricePerPersonData === "string") {
     try {
@@ -89,7 +87,6 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Parse itinerary field if it's a JSON string
   let itineraryData = req.body.itinerary;
   if (typeof itineraryData === "string") {
     try {
@@ -99,7 +96,6 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Parse includes field if it's a JSON string
   let includesData = req.body.includes;
   if (typeof includesData === "string") {
     try {
@@ -109,7 +105,6 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Parse not_includes field if it's a JSON string
   let notIncludesData = req.body.not_includes;
   if (typeof notIncludesData === "string") {
     try {
@@ -128,6 +123,8 @@ exports.createModel = asyncHandler(async (req, res, next) => {
     not_includes: notIncludesData,
     images: images.length > 0 ? images : undefined,
   };
+
+  console.log("Creating model with data:", modelData);
 
   const model = await Model.create(modelData);
 
